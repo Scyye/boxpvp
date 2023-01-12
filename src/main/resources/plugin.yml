@@ -1,0 +1,6 @@
+name: BoxPVP
+version: '${project.version}'
+main: tk.scyye.boxpvp.Main
+api-version: 1.19
+authors: [ Scyye, Senny ]
+description: Adds additional boxpvp features
