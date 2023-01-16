@@ -27,14 +27,14 @@ public class PunishmentMethods {
         if (diff > 0){
             ShortMethods.setTempBanned(target.getUniqueId().toString(), endOfban, reason);
             String message = ShortMethods.getMessage(endOfban);
-            if (silently){
+            if (!silently){
                 plugin.getServer().broadcastMessage(target.getDisplayName()+" a fost banat de catre "
                 +player.getDisplayName()+" cu motivul "+reason+" pentru "+message);
             }else{
                 ShortMethods.sendSilentlyMessage(target.getDisplayName()+" a fost banat de catre "
                         +player.getDisplayName()+" cu motivul "+reason+" pentru "+message +" [silent]");
             }
-            target.kickPlayer("Esti banat pentru "+message);
+            target.kickPlayer("Esti banat pentru "+message + " because of "+reason);
         }else{
             player.sendMessage("ERROR, nu ai introdus timpul corect.");
         }

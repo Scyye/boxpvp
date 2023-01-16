@@ -30,7 +30,21 @@ public class tempBanCommands implements CommandExecutor {
                 PunishmentMethods.tempBan(playerName, amount, unit, (Player) sender, reason, false);
             }
         }else if (args.length > 4){
-            
+            String playerName = args[0];
+            String amount = args[1];
+            String unit = args[2];
+            Boolean silently = false;
+            StringBuilder sb = new StringBuilder();
+            for (int i = 3; i < args.length; i++){
+                if (!args[i].equals("-s")){
+                    sb.append(args[i]).append(" ");
+                }else{
+                    silently = true;
+                }
+            }
+            PunishmentMethods.tempBan(playerName, amount, unit, (Player) sender, sb.toString(), silently);
+        }else{
+            sender.sendMessage("/tempban <player> <amount> <sec/min> <reason> {-s (silently)}");
         }
 
         return true;

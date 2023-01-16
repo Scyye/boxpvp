@@ -1,6 +1,8 @@
 package me.xsenny.msbox;
 
+import me.xsenny.msbox.commands.tempBanCommands;
 import me.xsenny.msbox.database.Database;
+import me.xsenny.msbox.listeners.TempBanListener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.xml.crypto.Data;
@@ -26,21 +28,21 @@ public final class MsBox extends JavaPlugin {
 
         File file = new File(banPath);
         new File("plugins/MsBox").mkdir();
-        if (!file.exists()){
+        if (file.exists()){
             currentTempBans = loadTempBans();
         }
         if (currentTempBans == null){
             currentTempBans = new HashMap<>();
         }
         File file1 = new File(mutePath);
-        if (!file1.exists()){
+        if (file1.exists()){
             currentTempMutes = loadTempMutes();
         }
         if (currentTempMutes == null){
             currentTempMutes = new HashMap<>();
         }
         File file2 = new File("plugins/MsBox"+File.separator + "PermBanList.dat");
-        if (!file2.exists()){
+        if (file2.exists()){
             permBans = loadPermBans();
         }
         if (permBans == null){
@@ -48,15 +50,19 @@ public final class MsBox extends JavaPlugin {
         }
 
         File file3 = new File("plugins/MsBox"+File.separator + "PermMuteList.dat");
-        if (!file3.exists()){
+        if (file3.exists()){
             permMutes = loadPermMutes();
         }
         if (permMutes == null){
             permMutes = new ArrayList<>();
         }
         Database.connect();
-        Database.onUpdate("CREATE TABLE IF NOT EXISTS BANS (uuid string, is_perm boolean, time long, reason string)");
-        Database.onUpdate("CREATE TABLE IF NOT EXISTS MUTES (uuid string, is_perm boolean, time long, reason string)");
+        Database.onUpdate("CREATE TABLE IF NOT EXISTS BANS (uuid varchar(40), is_perm integer, time integer, reason string)");
+        Database.onUpdate("CREATE TABLE IF NOT EXISTS MUTES (uuid varchar(40), is_perm integer, time integer, reason string)");
+
+        getCommand("tempban").setExecutor(new tempBanCommands());
+
+        getServer().getPluginManager().registerEvents(new TempBanListener(), this);
 
     }
 

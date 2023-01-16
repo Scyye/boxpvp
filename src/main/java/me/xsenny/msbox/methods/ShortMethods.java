@@ -9,7 +9,9 @@ public class ShortMethods {
 
     public static void setTempBanned(String uuid, Long endofban, String reason){
         MsBox.currentTempBans.put(uuid, endofban);
-        Database.onUpdate("INSERT INTO BANS("+uuid+", "+false+", "+endofban+", "+reason+")");
+        System.out.println(endofban);
+        Database.onUpdate("INSERT INTO BANS VALUES(\""+uuid+"\", \"0\", "+endofban+", \""+reason+"\")");
+
     }
 
     public static void sendSilentlyMessage(String message){
@@ -18,6 +20,15 @@ public class ShortMethods {
                 p.sendMessage(message);
             }
         }
+    }
+
+    public static boolean isPlayerBanned(Player player){
+        if (MsBox.currentTempBans.containsKey(player.getUniqueId().toString())){
+            if (MsBox.currentTempBans.get(player.getUniqueId().toString()) != null){
+                return true;
+            }
+        }
+        return false;
     }
 
     public static String getMessage(long endOfBan){

@@ -2,3 +2,6 @@ name: MsBox
 version: '${project.version}'
 main: me.xsenny.msbox.MsBox
 api-version: 1.19
+commands:
+  tempban:
+    description: tempban a player
