@@ -1,0 +1,4 @@
+name: MsBox
+version: '${project.version}'
+main: me.xsenny.msbox.MsBox
+api-version: 1.19
