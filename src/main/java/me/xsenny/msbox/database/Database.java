@@ -12,7 +12,7 @@ public class Database {
     public static void connect(){
         connection = null;
         try{
-            File file = new File("database.db");
+            File file = new File("plugins/MsBox/database.db");
             if (!file.exists()){
                 file.createNewFile();
             }

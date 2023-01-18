@@ -14,6 +14,9 @@ public class PunishmentMethods {
             player.sendMessage("PLAYER ISNT ONLINE");
             return;
         }
+        if (target.isOp()){
+            player.sendMessage("He is op");
+        }
         Integer integer;
         try{
             integer = Integer.parseInt(amount);
@@ -25,7 +28,7 @@ public class PunishmentMethods {
         long now = System.currentTimeMillis();
         long diff = endOfban - now;
         if (diff > 0){
-            ShortMethods.setTempBanned(target.getUniqueId().toString(), endOfban, reason);
+            ShortMethods.setTempBanned(target.getUniqueId().toString(), endOfban, reason, player);
             String message = ShortMethods.getMessage(endOfban);
             if (!silently){
                 plugin.getServer().broadcastMessage(target.getDisplayName()+" a fost banat de catre "
@@ -40,6 +43,24 @@ public class PunishmentMethods {
         }
     }
 
-
+    public static void permBan(String name, Player player, String reason, Boolean silently){
+        Player target = plugin.getServer().getPlayer(name);
+        if (target == null || !target.isOnline()){
+            player.sendMessage("Player isnt online");
+            return;
+        }
+        if (target.isOp()){
+            player.sendMessage("He is op");
+            return;
+        }
+        ShortMethods.setPermBanned(target.getUniqueId().toString(), reason, player);
+        if (silently){
+            ShortMethods.sendSilentlyMessage("Player "+target.getName()+" was banned by "+player.getName()+" because "
+            +reason+ " permanently [silent]");
+        }else{
+            ShortMethods.sendSilentlyMessage("Player "+target.getName()+" was banned by "+player.getName()+" because "
+                    +reason+ " permanently [silent]");
+        }
+    }
 
 }

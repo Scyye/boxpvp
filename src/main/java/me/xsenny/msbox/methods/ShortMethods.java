@@ -7,12 +7,13 @@ import org.bukkit.entity.Player;
 
 public class ShortMethods {
 
-    public static void setTempBanned(String uuid, Long endofban, String reason){
+    public static void setTempBanned(String uuid, Long endofban, String reason, Player who){
         MsBox.currentTempBans.put(uuid, endofban);
-        System.out.println(endofban);
-        Database.onUpdate("INSERT INTO BANS VALUES(\""+uuid+"\", \"0\", "+endofban+", \""+reason+"\")");
-
+        Database.onUpdate("INSERT INTO BANS VALUES(\""+uuid+"\", \"0\", "+endofban+", \""+reason+"\", 0, "+who
+                .getName()+")");
     }
+
+
 
     public static void sendSilentlyMessage(String message){
         for (Player p : Bukkit.getOnlinePlayers()){
@@ -22,11 +23,19 @@ public class ShortMethods {
         }
     }
 
+    public static void setPermBanned(String uuid, String reason, Player who){
+        MsBox.permBans.add(uuid);
+        Database.onUpdate("INSERT INTO BANS VALUES(\""+uuid+"\", 1, NULL, \""+reason+"\", 0, "+who.getName()+")");
+    }
+
     public static boolean isPlayerBanned(Player player){
         if (MsBox.currentTempBans.containsKey(player.getUniqueId().toString())){
             if (MsBox.currentTempBans.get(player.getUniqueId().toString()) != null){
                 return true;
             }
+        }
+        if (MsBox.permBans.contains(player.getUniqueId().toString())){
+            return true;
         }
         return false;
     }

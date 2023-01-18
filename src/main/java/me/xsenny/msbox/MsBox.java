@@ -1,15 +1,14 @@
 package me.xsenny.msbox;
 
+import me.xsenny.msbox.commands.permBanCommand;
 import me.xsenny.msbox.commands.tempBanCommands;
 import me.xsenny.msbox.database.Database;
-import me.xsenny.msbox.listeners.TempBanListener;
+import me.xsenny.msbox.listeners.BanListener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import javax.xml.crypto.Data;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.UUID;
 
 public final class MsBox extends JavaPlugin {
 
@@ -57,12 +56,14 @@ public final class MsBox extends JavaPlugin {
             permMutes = new ArrayList<>();
         }
         Database.connect();
-        Database.onUpdate("CREATE TABLE IF NOT EXISTS BANS (uuid varchar(40), is_perm integer, time integer, reason string)");
-        Database.onUpdate("CREATE TABLE IF NOT EXISTS MUTES (uuid varchar(40), is_perm integer, time integer, reason string)");
+        Database.onUpdate("CREATE TABLE IF NOT EXISTS BANS (uuid varchar(40), is_perm integer, time integer, reason string, unbanned integer, by_who varchar(40))");
+        System.out.println("ce incomplete input visezi?");
+        Database.onUpdate("CREATE TABLE IF NOT EXISTS MUTES (uuid varchar(40), is_perm integer, time integer, reason string, unbanned integer, by_who varchar(40))");
 
         getCommand("tempban").setExecutor(new tempBanCommands());
+        getCommand("ban").setExecutor(new permBanCommand());
 
-        getServer().getPluginManager().registerEvents(new TempBanListener(), this);
+        getServer().getPluginManager().registerEvents(new BanListener(), this);
 
     }
 
