@@ -1,9 +1,11 @@
 package me.xsenny.msbox;
 
 import me.xsenny.msbox.commands.permBanCommand;
+import me.xsenny.msbox.commands.permMuteCommand;
 import me.xsenny.msbox.commands.tempBanCommands;
 import me.xsenny.msbox.database.Database;
 import me.xsenny.msbox.listeners.BanListener;
+import me.xsenny.msbox.listeners.MuteListener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
@@ -62,7 +64,9 @@ public final class MsBox extends JavaPlugin {
 
         getCommand("tempban").setExecutor(new tempBanCommands());
         getCommand("ban").setExecutor(new permBanCommand());
+        getCommand("mute").setExecutor(new permMuteCommand());
 
+        getServer().getPluginManager().registerEvents(new MuteListener(), this);
         getServer().getPluginManager().registerEvents(new BanListener(), this);
 
     }

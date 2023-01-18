@@ -1,7 +1,7 @@
 package me.xsenny.msbox.utils;
 
 public enum PunishUnit {
-    SECOND("sec", 1/60), MINUTE("min", 1), HOUR("hour", 60), DAY("day", 60*24), WEEK("week", 60*24*7),
+    SECOND("s", 1/60), MINUTE("m", 1), HOUR("h", 60), DAY("d", 60*24), WEEK("w", 60*24*7),
     MONTH("month", 30*60*24), YEAR("year", 20*60*24*12);
     public String name;
     public int multi;

@@ -1,37 +1,35 @@
 package me.xsenny.msbox.commands;
 
 import me.xsenny.msbox.methods.PunishmentMethods;
-import me.xsenny.msbox.methods.ShortMethods;
 import me.xsenny.msbox.utils.Permission;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class tempBanCommands implements CommandExecutor {
+public class tempMuteCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
         if (sender instanceof Player){
             Player p = (Player) sender;
-            if (p.isOp() || p.hasPermission(Permission.TEMPBAN.getPermission())){
+            if (p.isOp() || p.hasPermission(Permission.TEMPMUTE.getPermission())){
                 if (args.length == 3){
                     String playerName = args[0];
                     String amount = args[1];
                     String unit = args[2];
-                    PunishmentMethods.tempBan(playerName, amount, unit, (Player) sender, "No reason", false);
+                    PunishmentMethods.tempMute(playerName, amount, unit, (Player) sender, "No reason", false);
                 }else if (args.length == 4){
                     String playerName = args[0];
                     String amount = args[1];
                     String unit = args[2];
                     if (args[3].equals("-s")){
                         Boolean silently = true;
-                        PunishmentMethods.tempBan(playerName, amount, unit, (Player) sender, "No reason", silently);
+                        PunishmentMethods.tempMute(playerName, amount, unit, (Player) sender, "No reason", silently);
                     }else{
                         String reason = args[3];
-                        PunishmentMethods.tempBan(playerName, amount, unit, (Player) sender, reason, false);
+                        PunishmentMethods.tempMute(playerName, amount, unit, (Player) sender, reason, false);
                     }
                 }else if (args.length > 4){
                     String playerName = args[0];
@@ -46,10 +44,12 @@ public class tempBanCommands implements CommandExecutor {
                             silently = true;
                         }
                     }
-                    PunishmentMethods.tempBan(playerName, amount, unit, (Player) sender, sb.toString(), silently);
+                    PunishmentMethods.tempMute(playerName, amount, unit, (Player) sender, sb.toString(), silently);
                 }else{
-                    sender.sendMessage("/tempban <player> <amount> <sec/min> <reason> {-s (silently)}");
+                    sender.sendMessage("/tempmmute <player> <amount> <min, hours> <reason> {-s (silently)}");
                 }
+            }else{
+                sender.sendMessage("This command is only for staff.");
             }
         }
 

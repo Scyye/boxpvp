@@ -28,6 +28,28 @@ public class ShortMethods {
         Database.onUpdate("INSERT INTO BANS VALUES(\""+uuid+"\", 1, NULL, \""+reason+"\", 0, "+who.getName()+")");
     }
 
+    public static void setPermMute(String uuid, String reason, Player who){
+        MsBox.permMutes.add(uuid);
+        Database.onUpdate("INSERT INTO MUTES VALUES(\""+uuid+"\", 1, NULL, \""+reason+"\", 0, "+who.getName()+")");
+    }
+
+    public static void setTempMute(String uuid, String reason, Player who, Long endOfMute){
+        MsBox.currentTempMutes.put(uuid, endOfMute);
+        Database.onUpdate("INSERT INTO MUTES VALUES(\""+uuid+"\", \"0\", "+endOfMute+", \""+reason+"\", 0, "+who
+                .getName()+")");
+    }
+
+    public static boolean isPlayerMuted(Player player){
+        if (MsBox.currentTempMutes.containsKey(player.getUniqueId().toString())){
+            if (MsBox.currentTempMutes.get(player.getUniqueId().toString()) != null){
+                return true;
+            }
+        }if (MsBox.permMutes.contains(player.getUniqueId().toString())){
+            return true;
+        }
+        return false;
+    }
+
     public static boolean isPlayerBanned(Player player){
         if (MsBox.currentTempBans.containsKey(player.getUniqueId().toString())){
             if (MsBox.currentTempBans.get(player.getUniqueId().toString()) != null){
