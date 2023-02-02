@@ -1,8 +1,6 @@
 package me.xsenny.msbox;
 
-import me.xsenny.msbox.commands.permBanCommand;
-import me.xsenny.msbox.commands.permMuteCommand;
-import me.xsenny.msbox.commands.tempBanCommands;
+import me.xsenny.msbox.commands.*;
 import me.xsenny.msbox.database.Database;
 import me.xsenny.msbox.listeners.BanListener;
 import me.xsenny.msbox.listeners.MuteListener;
@@ -58,13 +56,16 @@ public final class MsBox extends JavaPlugin {
             permMutes = new ArrayList<>();
         }
         Database.connect();
-        Database.onUpdate("CREATE TABLE IF NOT EXISTS BANS (uuid varchar(40), is_perm integer, time integer, reason string, unbanned integer, by_who varchar(40))");
-        System.out.println("ce incomplete input visezi?");
-        Database.onUpdate("CREATE TABLE IF NOT EXISTS MUTES (uuid varchar(40), is_perm integer, time integer, reason string, unbanned integer, by_who varchar(40))");
+        Database.onUpdate("CREATE TABLE IF NOT EXISTS BANS (uuid varchar(40), is_perm integer, time integer, reason string, unbanned integer, by_who varchar(40), when varchar(16))");
+        Database.onUpdate("CREATE TABLE IF NOT EXISTS MUTES (uuid varchar(40), is_perm integer, time integer, reason string, unbanned integer, by_who varchar(40), when varchar(16))");
+        Database.onUpdate("CREATE TABLE IF NOT EXISTS KICKS (uuid varchar(40), reason string, by_who varchar(40), when varchar(16)");
+
 
         getCommand("tempban").setExecutor(new tempBanCommands());
         getCommand("ban").setExecutor(new permBanCommand());
         getCommand("mute").setExecutor(new permMuteCommand());
+        getCommand("tempmute").setExecutor(new tempMuteCommand());
+        getCommand("kick").setExecutor(new kickPlayer());
 
         getServer().getPluginManager().registerEvents(new MuteListener(), this);
         getServer().getPluginManager().registerEvents(new BanListener(), this);

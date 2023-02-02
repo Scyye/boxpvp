@@ -1,7 +1,7 @@
 package me.xsenny.msbox.utils;
 
 public enum Permission {
-    MUTE("msbox.mute"), TEMPMUTE("msbox.tempmute"), BAN("msbox.ban"), TEMPBAN("msbox.tempban");
+    MUTE("msbox.mute"), TEMPMUTE("msbox.tempmute"), BAN("msbox.ban"), TEMPBAN("msbox.tempban"), KICK("msbox.kick");
 
     private String permission;
     Permission(String per){

@@ -5,12 +5,16 @@ import me.xsenny.msbox.database.Database;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class ShortMethods {
 
-    public static void setTempBanned(String uuid, Long endofban, String reason, Player who){
+    public static void setTempBanned(String uuid, Long endofban, String reason, Player who, String where){
         MsBox.currentTempBans.put(uuid, endofban);
         Database.onUpdate("INSERT INTO BANS VALUES(\""+uuid+"\", \"0\", "+endofban+", \""+reason+"\", 0, "+who
-                .getName()+")");
+                .getName()+", "+where +")");
     }
 
 
@@ -23,20 +27,24 @@ public class ShortMethods {
         }
     }
 
-    public static void setPermBanned(String uuid, String reason, Player who){
+    public static void setPermBanned(String uuid, String reason, Player who, String where){
         MsBox.permBans.add(uuid);
-        Database.onUpdate("INSERT INTO BANS VALUES(\""+uuid+"\", 1, NULL, \""+reason+"\", 0, "+who.getName()+")");
+        Database.onUpdate("INSERT INTO BANS VALUES(\""+uuid+"\", 1, NULL, \""+reason+"\", 0, "+who.getName()+", "+where+")");
     }
 
-    public static void setPermMute(String uuid, String reason, Player who){
+    public static void setPermMute(String uuid, String reason, Player who, String where){
         MsBox.permMutes.add(uuid);
-        Database.onUpdate("INSERT INTO MUTES VALUES(\""+uuid+"\", 1, NULL, \""+reason+"\", 0, "+who.getName()+")");
+        Database.onUpdate("INSERT INTO MUTES VALUES(\""+uuid+"\", 1, NULL, \""+reason+"\", 0, "+who.getName()+", " + where +")");
     }
 
-    public static void setTempMute(String uuid, String reason, Player who, Long endOfMute){
+    public static void setTempMute(String uuid, String reason, Player who, Long endOfMute, String where){
         MsBox.currentTempMutes.put(uuid, endOfMute);
         Database.onUpdate("INSERT INTO MUTES VALUES(\""+uuid+"\", \"0\", "+endOfMute+", \""+reason+"\", 0, "+who
-                .getName()+")");
+                .getName()+", "+where+")");
+    }
+
+    public static void setKick(String uuid, String reason, Player who, String where){
+        Database.onUpdate("INSERT INTO KICKS VALUES(\""+uuid+"\", \""+reason+"\", "+who.getName()+", "+where+")");
     }
 
     public static boolean isPlayerMuted(Player player){
@@ -92,6 +100,13 @@ public class ShortMethods {
         }
 
         return message;
+    }
+
+
+    public static String getWhen(long millis){
+        Date date = new Date(millis);
+        DateFormat df = new SimpleDateFormat("yy:MM:dd HH:mm");
+        return df.format(date);
     }
 
 }

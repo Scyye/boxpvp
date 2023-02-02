@@ -29,7 +29,7 @@ public class PunishmentMethods {
         long now = System.currentTimeMillis();
         long diff = endOfban - now;
         if (diff > 0){
-            ShortMethods.setTempBanned(target.getUniqueId().toString(), endOfban, reason, player);
+            ShortMethods.setTempBanned(target.getUniqueId().toString(), endOfban, reason, player, ShortMethods.getWhen(System.currentTimeMillis()));
             String message = ShortMethods.getMessage(endOfban);
             if (!silently){
                 plugin.getServer().broadcastMessage(target.getDisplayName()+" a fost banat de catre "
@@ -54,7 +54,7 @@ public class PunishmentMethods {
             player.sendMessage("He is op");
             return;
         }
-        ShortMethods.setPermBanned(target.getUniqueId().toString(), reason, player);
+        ShortMethods.setPermBanned(target.getUniqueId().toString(), reason, player, ShortMethods.getWhen(System.currentTimeMillis()));
         if (silently){
             ShortMethods.sendSilentlyMessage("Player "+target.getName()+" was banned by "+player.getName()+" because "
             +reason+ " permanently [silent]");
@@ -75,7 +75,7 @@ public class PunishmentMethods {
             player.sendMessage("He is op, you can t mute him");
             return;
         }
-        ShortMethods.setPermMute(target.getUniqueId().toString(), reason, player);
+        ShortMethods.setPermMute(target.getUniqueId().toString(), reason, player, ShortMethods.getWhen(System.currentTimeMillis()));
         if (silently){
             ShortMethods.sendSilentlyMessage("Player "+target.getName()+" was muted by "+player.getName()+" because "
             +reason+" permanently. [silent]");
@@ -106,7 +106,7 @@ public class PunishmentMethods {
         long now = System.currentTimeMillis();
         long diff = endOfMute - now;
         if (diff > 0){
-            ShortMethods.setTempBanned(target.getUniqueId().toString(), endOfMute, reason, player);
+            ShortMethods.setTempMute(target.getUniqueId().toString(), reason, player, endOfMute, ShortMethods.getWhen(System.currentTimeMillis()));
             String message = ShortMethods.getMessage(endOfMute);
             if (!silently){
                 plugin.getServer().broadcastMessage(target.getDisplayName()+" a primit mute de la "
@@ -120,5 +120,25 @@ public class PunishmentMethods {
             player.sendMessage("ERROR, nu ai introdus timpul corect.");
         }
     }
+
+    public static void kickAPlayer(String name, Player who, String reason, Boolean silently){
+        Player target = plugin.getServer().getPlayer(name);
+        if (target == null || !target.isOnline()){
+            who.sendMessage("PlAYER ISNT ONLINE");
+            return;
+        }
+        if (target.isOp()){
+            who.sendMessage("TARGET IS OP");
+            return;
+        }
+        target.kickPlayer("Kicked by "+ who.getName()+" because: "+reason);
+        ShortMethods.setKick(target.getUniqueId().toString(), reason, who, ShortMethods.getWhen(System.currentTimeMillis()));
+        if (silently){
+            ShortMethods.sendSilentlyMessage("Player "+name+" was kicked beause of " +reason + " by "+ who.getName() +" [Silent]");
+        }else{
+            Bukkit.broadcastMessage("Player "+name+" was kicked because of " +reason + " by "+who.getName());
+        }
+    }
+
 
 }
