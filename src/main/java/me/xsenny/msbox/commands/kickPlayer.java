@@ -26,7 +26,7 @@ public class kickPlayer implements CommandExecutor {
                 String playerName = args[0];
                 boolean silently = false;
                 StringBuilder sb = new StringBuilder();
-                for (int i = 3; i < args.length; i++){
+                for (int i = 1; i < args.length; i++){
                     if (!args[i].equals("-s")){
                         sb.append(args[i]).append(" ");
                     }else{

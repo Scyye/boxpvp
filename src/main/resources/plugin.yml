@@ -13,3 +13,5 @@ commands:
     description: tempmute a player
   kick:
     description: Kick a player
+  report:
+    description: Report a player
