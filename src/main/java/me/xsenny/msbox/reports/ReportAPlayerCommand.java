@@ -1,6 +1,7 @@
 package me.xsenny.msbox.reports;
 
 import me.xsenny.msbox.MsBox;
+import me.xsenny.msbox.methods.ShortMethods;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -23,12 +24,10 @@ public class ReportAPlayerCommand implements CommandExecutor {
         Player who = MsBox.plugin.getServer().getPlayer(args[0]);
         StringBuilder sb = new StringBuilder();
         for (int i = 1; i < args.length; i++){
-            sb.append(args[i]);
+            sb.append(args[i]).append(" ");
         }
         ReportsMethods.createReport(player, who, sb.toString());
-        for(Report report : MsBox.reports){
-            player.sendMessage(report.getId());
-        }
+        ShortMethods.sendSilentlyMessage("Player "+ player.getName()+" reported " +who.getName()+" because of "+sb.toString());
         return true;
     }
 }
