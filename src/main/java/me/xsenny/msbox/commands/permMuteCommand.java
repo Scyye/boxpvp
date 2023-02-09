@@ -26,8 +26,12 @@ public class permMuteCommand implements CommandExecutor {
                 }
                 Boolean silent = false;
                 StringBuffer sb = new StringBuffer();
+                int i = 0;
                 for (String strings : args){
-                    if (strings.equals("-s")){
+                    if (i == 0){
+                        i = 1;
+                    }
+                    else if (strings.equals("-s")){
                         silent = true;
                     }else{
                         sb.append(strings).append(" ");

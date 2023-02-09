@@ -95,5 +95,10 @@ public class ReportsMenu extends PaginatedMenus {
                 }
             }
         }
+        for (int i = 0; i < getMaxItemsPerPage(); i++){
+            if (inventory.getItem(i) == null){
+                inventory.setItem(i, makeItem(Material.BLACK_STAINED_GLASS_PANE, " "));
+            }
+        }
     }
 }

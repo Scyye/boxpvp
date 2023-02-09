@@ -16,19 +16,19 @@ public class MuteListener implements Listener {
 
     public static void onChat(AsyncPlayerChatEvent e){
         Player p = e.getPlayer();
-        if (ShortMethods.isPlayerMuted(p)){
+        if (ShortMethods.isPlayerMuted(p.getUniqueId().toString())){
             if (!MsBox.permMutes.contains(p.getUniqueId().toString())){
                 long endOfBan = MsBox.currentTempMutes.get(e.getPlayer().getUniqueId().toString());
                 long now = System.currentTimeMillis();
                 long diff = endOfBan - now;
                 if (diff <= 0){
                     MsBox.currentTempMutes.remove(e.getPlayer().getUniqueId());
+                    Database.onUpdate("DELETE FROM MUTES WHERE uuid = \"" + e.getPlayer().getUniqueId().toString()+"\"");
                 }else{
                     p.sendMessage("You are muted for "+ShortMethods.getMessage(diff) + " because "+reasonOfMute(e.getPlayer().getUniqueId().toString())+ "by: "+getByWho(e.getPlayer().getUniqueId().toString()));
                     e.setCancelled(true);
                 }
             }else{
-
                 p.sendMessage("You are permanently muted by "+getByWho(p.getUniqueId().toString()) + " because "+reasonOfMute(p.getUniqueId().toString()));
                 e.setCancelled(true);
             }

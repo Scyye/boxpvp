@@ -2,9 +2,12 @@ package me.xsenny.msbox.methods;
 
 import me.xsenny.msbox.MsBox;
 import me.xsenny.msbox.database.Database;
+import me.xsenny.msbox.utils.PunishmentType;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -13,11 +16,24 @@ public class ShortMethods {
 
     public static void setTempBanned(String uuid, Long endofban, String reason, Player who, String where){
         MsBox.currentTempBans.put(uuid, endofban);
-        Database.onUpdate("INSERT INTO BANS VALUES(\""+uuid+"\", \"0\", "+endofban+", \""+reason+"\", 0, "+who
-                .getName()+", "+where +")");
+        Database.onUpdate("INSERT INTO BANS VALUES(\""+uuid+"\", \"0\", "+endofban+", \""+reason+"\", 0, \""+who
+                .getName()+"\", \""+where +"\")");
+        Database.onUpdate("INSERT INTO PLAYERLOG VALUES(\""+uuid+"\", \""+ PunishmentType.TEMPBAN.getType()+"\", \""+getWhen(System.currentTimeMillis())+"\", \""+who.getName()+"\", \"" + getMessage(endofban) +"\", \"" + reason+"\")");
     }
 
+    public static void unbanAPlayer(String uuid, Player who){
+        if (MsBox.permBans.contains(uuid)) MsBox.permBans.remove(uuid);
+        else if (MsBox.currentTempBans.containsKey(uuid) && MsBox.currentTempBans.get(uuid) != null) MsBox.currentTempBans.remove(uuid);
+        Database.onUpdate("INSERT INTO PLAYERLOG VALUES(\""+uuid+"\", \""+ PunishmentType.UNBAN.getType()+"\", \""+getWhen(System.currentTimeMillis())+"\", \""+who.getName()+"\", \"" + "nothing" +"\", \"" +"unbanned"+"\")");
+        Database.onUpdate("DELETE FROM BANS WHERE uuid = \"" + uuid+"\"");
+    }
 
+    public static void unmuteAPlayer(String uuid, Player who){
+        if (MsBox.permMutes.contains(uuid)) MsBox.permMutes.remove(uuid);
+        else if (MsBox.currentTempMutes.containsKey(uuid) && MsBox.currentTempMutes.get(uuid) != null) MsBox.currentTempMutes.remove(uuid);
+        Database.onUpdate("INSERT INTO PLAYERLOG VALUES(\""+uuid+"\", \""+ PunishmentType.UNMUTE.getType()+"\", \""+getWhen(System.currentTimeMillis())+"\", \""+who.getName()+"\", \"" + "nothing" +"\", \"" +"unbanned"+"\")");
+        Database.onUpdate("DELETE FROM MUTES WHERE uuid = \"" + uuid+"\"");
+    }
 
     public static void sendSilentlyMessage(String message){
         for (Player p : Bukkit.getOnlinePlayers()){
@@ -29,42 +45,46 @@ public class ShortMethods {
 
     public static void setPermBanned(String uuid, String reason, Player who, String where){
         MsBox.permBans.add(uuid);
-        Database.onUpdate("INSERT INTO BANS VALUES(\""+uuid+"\", 1, NULL, \""+reason+"\", 0, "+who.getName()+", "+where+")");
+        Database.onUpdate("INSERT INTO BANS VALUES(\""+uuid+"\", 1, NULL, \""+reason+"\", 0, \""+who.getName()+"\", \""+where+"\")");
+        Database.onUpdate("INSERT INTO PLAYERLOG VALUES(\""+uuid+"\", \""+ PunishmentType.BAN.getType()+"\", \""+getWhen(System.currentTimeMillis())+"\", \""+who.getName()+"\", \"" + "Permanent" +"\", \"" + reason+"\")");
     }
 
     public static void setPermMute(String uuid, String reason, Player who, String where){
         MsBox.permMutes.add(uuid);
-        Database.onUpdate("INSERT INTO MUTES VALUES(\""+uuid+"\", 1, NULL, \""+reason+"\", 0, "+who.getName()+", " + where +")");
+        Database.onUpdate("INSERT INTO MUTES VALUES(\""+uuid+"\", 1, NULL, \""+reason+"\", 0, \""+who.getName()+"\", \"" + where +"\")");
+        Database.onUpdate("INSERT INTO PLAYERLOG VALUES(\""+uuid+"\", \""+ PunishmentType.MUTE.getType()+"\", \""+getWhen(System.currentTimeMillis())+"\", \""+who.getName()+"\", \"" + "Permanent" +"\", \"" + reason+"\")");
     }
 
     public static void setTempMute(String uuid, String reason, Player who, Long endOfMute, String where){
         MsBox.currentTempMutes.put(uuid, endOfMute);
-        Database.onUpdate("INSERT INTO MUTES VALUES(\""+uuid+"\", \"0\", "+endOfMute+", \""+reason+"\", 0, "+who
-                .getName()+", "+where+")");
+        Database.onUpdate("INSERT INTO MUTES VALUES(\""+uuid+"\", \"0\", "+endOfMute+", \""+reason+"\", 0, \""+who
+                .getName()+"\", \""+where+"\")");
+        Database.onUpdate("INSERT INTO PLAYERLOG VALUES(\""+uuid+"\", \""+ PunishmentType.TEMPMUTE.getType()+"\", \""+getWhen(System.currentTimeMillis())+"\", \""+who.getName()+"\", \"" + getMessage(endOfMute) +"\", \"" + reason+"\")");
     }
 
     public static void setKick(String uuid, String reason, Player who, String where){
-        Database.onUpdate("INSERT INTO KICKS VALUES(\""+uuid+"\", \""+reason+"\", "+who.getName()+", "+where+")");
+        Database.onUpdate("INSERT INTO PLAYERSLOG VALUES(\""+uuid+"\", \""+reason+"\", \""+who.getName()+"\", \""+where+"\")");
+        Database.onUpdate("INSERT INTO PLAYERLOG VALUES(\""+uuid+"\", \""+ PunishmentType.KICK.getType()+"\", \""+getWhen(System.currentTimeMillis())+"\", \""+who.getName()+"\", \"" + "0" +"\", \"" + reason+"\")");
     }
 
-    public static boolean isPlayerMuted(Player player){
-        if (MsBox.currentTempMutes.containsKey(player.getUniqueId().toString())){
-            if (MsBox.currentTempMutes.get(player.getUniqueId().toString()) != null){
+    public static boolean isPlayerMuted(String uuid){
+        if (MsBox.currentTempMutes.containsKey(uuid)){
+            if (MsBox.currentTempMutes.get(uuid) != null){
                 return true;
             }
-        }if (MsBox.permMutes.contains(player.getUniqueId().toString())){
+        }if (MsBox.permMutes.contains(uuid)){
             return true;
         }
         return false;
     }
 
-    public static boolean isPlayerBanned(Player player){
-        if (MsBox.currentTempBans.containsKey(player.getUniqueId().toString())){
-            if (MsBox.currentTempBans.get(player.getUniqueId().toString()) != null){
+    public static boolean isPlayerBanned(String uuid){
+        if (MsBox.currentTempBans.containsKey(uuid)){
+            if (MsBox.currentTempBans.get(uuid) != null){
                 return true;
             }
         }
-        if (MsBox.permBans.contains(player.getUniqueId().toString())){
+        if (MsBox.permBans.contains(uuid)){
             return true;
         }
         return false;
@@ -107,6 +127,19 @@ public class ShortMethods {
         Date date = new Date(millis);
         DateFormat df = new SimpleDateFormat("yy:MM:dd HH:mm");
         return df.format(date);
+    }
+
+    public static String getUUIDFromName(String name){
+        ResultSet rs = Database.onQuery("SELECT * FROM PLAYERS WHERE name = \"" + name + "\"");
+        if (rs != null){
+            try{
+                if (rs.next())
+                    return rs.getString("uuid");
+            }catch (SQLException e){
+                System.out.println(e);
+            }
+        }
+        return null;
     }
 
 }

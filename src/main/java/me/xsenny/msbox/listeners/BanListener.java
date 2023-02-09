@@ -14,15 +14,16 @@ public class BanListener implements Listener {
 
     @EventHandler
     public static void onJoin(PlayerLoginEvent e){
-        if (ShortMethods.isPlayerBanned(e.getPlayer())){
+        if (ShortMethods.isPlayerBanned(e.getPlayer().getUniqueId().toString())){
             if (!MsBox.permBans.contains(e.getPlayer().getUniqueId().toString())){
                 long endOfBan = MsBox.currentTempBans.get(e.getPlayer().getUniqueId().toString());
                 long now = System.currentTimeMillis();
                 long diff = endOfBan - now;
                 if (diff <= 0){
-                    MsBox.currentTempMutes.remove(e.getPlayer().getUniqueId());
+                    MsBox.currentTempBans.remove(e.getPlayer().getUniqueId());
+                    Database.onUpdate("DELETE FROM BANS WHERE uuid = \"" + e.getPlayer().getUniqueId().toString()+"\"");
                 }else{
-                    e.disallow(PlayerLoginEvent.Result.KICK_OTHER, "You are banned for "+ShortMethods.getMessage(endOfBan) + " because "+reasonOfBan(e.getPlayer().getUniqueId().toString())+ "by: "+getByWho(e.getPlayer().getUniqueId().toString()));
+                    e.disallow(PlayerLoginEvent.Result.KICK_OTHER, "You are banned for "+ShortMethods.getMessage(endOfBan) + " because "+reasonOfBan(e.getPlayer().getUniqueId().toString())+ " by: "+getByWho(e.getPlayer().getUniqueId().toString()));
                 }
             }else{
                 e.disallow(PlayerLoginEvent.Result.KICK_OTHER, "You are banned permanently because "+reasonOfBan(e.getPlayer().getUniqueId().toString())+" by: "+getByWho(e.getPlayer().getUniqueId().toString()));
@@ -34,31 +35,26 @@ public class BanListener implements Listener {
         ResultSet rs = Database.onQuery("SELECT * FROM BANS WHERE uuid = '" + uuid+"'");
         String name = "";
         if (rs != null){
-            while(true){
-                try {
-                    if (!rs.next()) break;
+            try{
+                if (rs.next())
                     name = rs.getString("by_who");
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-
+            }catch (SQLException e){
+                System.out.println(e);
             }
         }
         return name;
     }
 
     public static String reasonOfBan(String uuid){
-        ResultSet rs = Database.onQuery("SELECT * FROM BANS WHERE uuid = '" + uuid+"'");
+        ResultSet rs = Database.onQuery("SELECT * FROM BANS WHERE uuid = \"" + uuid+"\"");
         String reason = "";
         if (rs != null){
-            while(true){
-                try {
-                    if (!rs.next()) break;
+            try{
+                if (rs.next()) {
                     reason = rs.getString("reason");
-                } catch (SQLException e) {
-                    e.printStackTrace();
                 }
-
+            }catch (SQLException e){
+                System.out.println(e);
             }
         }
         return reason;

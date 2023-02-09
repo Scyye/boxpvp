@@ -17,3 +17,15 @@ commands:
     description: Report a player
   reports:
     description: View all created reports
+  vanish:
+    description: Vanish a player of yourself
+    aliases: v
+  teleport:
+    description: Teleport to a player
+    aliases: tp
+  invsee:
+    description: See player's inventory
+  unban:
+    description: Unban a banned player
+  unmute:
+    description: Unmute a muted player

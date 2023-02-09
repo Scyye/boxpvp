@@ -22,6 +22,10 @@ public class ReportAPlayerCommand implements CommandExecutor {
             return true;
         }
         Player who = MsBox.plugin.getServer().getPlayer(args[0]);
+        if (who == null || !who.isOnline()){
+            player.sendMessage("Player isnt online");
+            return true;
+        }
         StringBuilder sb = new StringBuilder();
         for (int i = 1; i < args.length; i++){
             sb.append(args[i]).append(" ");
